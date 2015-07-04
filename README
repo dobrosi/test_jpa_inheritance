@@ -4,4 +4,5 @@ Mivel az Eclipselink nem proxy elven működik, ezért ez a Hibernate-s proxy ob
 Próbáld ki!
 
 git clone https://github.com/dobrosi/test_jpa_inheritance.git
+cd test_jpa_inheritance
 mvn test
