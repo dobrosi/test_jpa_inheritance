@@ -81,6 +81,8 @@ public class TestJpa {
 		for (Irat irat : iratok) {
 			System.out.println(irat);
 			Felelos f = irat.getFelelos();
+			// Hibernate proxy-zott tipust rak ki,
+			// ezzel szemben az Eclipselink a ténylegeset.
 			System.out.println("<<< EZ A LÉNYEG >>> " + f.getClass());
 		}
 		System.out.println("Size: " + iratok.size());
