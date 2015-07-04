@@ -1,0 +1,8 @@
+Ez a kis teszt bemutatja, hogy miben más a Hibernate és az Eclipselink működése a származtatott Entity-k
+esetén. Mivel az Eclipselink nem proxy elven működik, ezért ez a Hibernate-s proxy objektumos probléma
+nem jön elő.
+
+Próbáld ki!
+
+git clone https://github.com/dobrosi/test_jpa_inheritance.git
+mvn test
