@@ -61,8 +61,8 @@ public class TestJpa {
 		Irat irat1 = new Irat();
 		Irat irat2 = new Irat();
 		Felelos f1, f2;
-		irat1.setFelelos(f1 = new SzervezetiEgyseg("Belyegk"));
-		irat2.setFelelos(f2 = new Felhasznalo("Annus"));
+		irat1.setFelelos(f1 = new SzervezetiEgyseg("Informatikai Osztály"));
+		irat2.setFelelos(f2 = new Felhasznalo("Dobrosi András"));
 
 		em.persist(f1);
 		em.persist(f2);
