@@ -1,6 +1,5 @@
 Ez a kis teszt bemutatja, hogy miben más a Hibernate és az Eclipselink működése a származtatott Entity-k esetén.
-Mivel az Eclipselink nem proxy elven működik, ezért ez a Hibernate-s proxy objektumos probléma
-nem jön elő.
+Mivel az Eclipselink nem proxy elven működik, ezért ez a Hibernate-s proxy objektumos probléma nem is jön elő.
 
 Próbáld ki!
 
