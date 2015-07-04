@@ -7,6 +7,7 @@ import hu.bla.model.SzervezetiEgyseg;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -20,6 +21,7 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class TestJpa {
+	private Logger logger = Logger.getLogger("TestJpa");
 	private static EntityManagerFactory factory;
 	private EntityManager em;
 	private EntityTransaction transaction;
@@ -50,7 +52,8 @@ public class TestJpa {
 			persist();
 
 			if (i == count - 1) {
-				printResult();
+				printResult(false);
+				printResult(true);
 			}
 		}
 	}
@@ -72,25 +75,31 @@ public class TestJpa {
 		closeTx();
 	}
 
-	private void printResult() {
+	private void printResult(boolean withFetch) {
 		openTx();
 
-		Query q = em.createQuery("select t from IratBase t");
+		String sql = "select i from IratBase i";
+		if(withFetch) {
+			sql += " join fetch i.felelos";
+			logger.info("Ha join fetch van a query-ben:");
+		} else {
+			logger.info("Join fetch nélkül:");
+		}
+		Query q = em.createQuery(sql);
 		List<Irat> iratok = q.getResultList();
 
 		for (Irat irat : iratok) {
-			System.out.println(irat);
 			Felelos f = irat.getFelelos();
 			// Hibernate proxy-zott tipust rak ki,
 			// ezzel szemben az Eclipselink a ténylegeset.
-			System.out.println("<<< EZ A LÉNYEG >>> " + f.getClass());
+			logger.info("<<< EZ A LÉNYEG >>> class: " + f.getClass() + ", toString: " + irat);
 		}
-		System.out.println("Size: " + iratok.size());
+		logger.info("Size: " + iratok.size());
 		closeTx();
 	}
 
 	private void printTime(String persUnit) {
-		System.out.println("time with " + persUnit + ": " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("time with " + persUnit + ": " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private void setup(String persUnit) {
