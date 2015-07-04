@@ -3,10 +3,12 @@ package hu.bla;
 import hu.bla.model.Felelos;
 import hu.bla.model.Felhasznalo;
 import hu.bla.model.Irat;
+import hu.bla.model.IratBase;
 import hu.bla.model.SzervezetiEgyseg;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -15,16 +17,23 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class TestJpa {
+	private Logger logger = Logger.getLogger("TestJpa");
 	private static EntityManagerFactory factory;
 	private EntityManager em;
 	private EntityTransaction transaction;
 	private long time;
 
+	@Test
+	public void initBla() {
+		System.out.println("!!!!!!!");
+	}
+	
 	@Test()
 	public void testHibernate() {
 		String persUnit = "hibernate";
@@ -33,9 +42,12 @@ public class TestJpa {
 		test(1);
 
 		printTime(persUnit);
+		
+		System.out.println("Andriska");
 	}
 
 	@Test
+	@Ignore
 	public void testEclipselink() {
 		String persUnit = "eclipselink";
 		setup(persUnit);
@@ -50,7 +62,8 @@ public class TestJpa {
 			persist();
 
 			if (i == count - 1) {
-				printResult();
+				printResult(false);
+				printResult(true);
 			}
 		}
 	}
@@ -61,8 +74,8 @@ public class TestJpa {
 		Irat irat1 = new Irat();
 		Irat irat2 = new Irat();
 		Felelos f1, f2;
-		irat1.setFelelos(f1 = new SzervezetiEgyseg("Belyegk"));
-		irat2.setFelelos(f2 = new Felhasznalo("Annus"));
+		irat1.setFelelos(f1 = new SzervezetiEgyseg("Informatikai Osztály"));
+		irat2.setFelelos(f2 = new Felhasznalo("Dobrosi András"));
 
 		em.persist(f1);
 		em.persist(f2);
@@ -72,31 +85,40 @@ public class TestJpa {
 		closeTx();
 	}
 
-	private void printResult() {
+	private void printResult(boolean withFetch) {
 		openTx();
 
-		Query q = em.createQuery("select t from IratBase t");
-		List<Irat> iratok = q.getResultList();
-
-		for (Irat irat : iratok) {
-			System.out.println(irat);
-			Felelos f = irat.getFelelos();
-			System.out.println("<<< EZ A LÉNYEG >>> " + f.getClass());
+		String sql = "select i from IratBase i";
+		if(withFetch) {
+			sql += " join fetch i.felelos";
+			logger.info("Ha join fetch van a query-ben:");
+		} else {
+			logger.info("Join fetch nélkül:");
 		}
-		System.out.println("Size: " + iratok.size());
+		Query q = em.createQuery(sql);
+		List<IratBase> iratok = q.getResultList();
+		
+		iratok.add(new Irat(new Felhasznalo("Hibernétnál Kakukk Tojás")));
+
+		for (IratBase iratBase : iratok) {
+			Felelos f = iratBase.getFelelos();
+			// Hibernate proxy-zott tipust rak ki,
+			// ezzel szemben az Eclipselink a ténylegeset.
+			logger.info("<<< EZ A LÉNYEG >>> class: " + f.getClass() + ", name: " + f.getName());
+		}
+
+		logger.info("Size: " + iratok.size());
+		
 		closeTx();
 	}
 
 	private void printTime(String persUnit) {
-		System.out.println("time with " + persUnit + ": " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("time with " + persUnit + ": " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private void setup(String persUnit) {
+		factory = FactoryHolder.getFactorty(persUnit);
 		time = System.currentTimeMillis();
-		if (factory != null) {
-			factory.close();
-		}
-		factory = Persistence.createEntityManagerFactory(persUnit);
 	}
 
 	private void openTx() {
@@ -106,8 +128,9 @@ public class TestJpa {
 	}
 
 	private void closeTx() {
-		transaction.commit();
+		em.flush();
 		em.close();
+		transaction.commit();
 	}
 
 	static {

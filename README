@@ -1,0 +1,9 @@
+Zsolti!
+
+A TestQuery-t nezd meg!
+
+Próbáld ki!
+
+git clone https://github.com/dobrosi/test_jpa_inheritance.git
+cd test_jpa_inheritance
+mvn test -Dtest=TestQuery
