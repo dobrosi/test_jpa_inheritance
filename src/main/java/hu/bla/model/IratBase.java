@@ -23,6 +23,10 @@ public abstract class IratBase {
 	private Felelos felelos;
 	
 	public IratBase() {}
+	
+	public IratBase(Felelos felelos) {
+		this.felelos = felelos;
+	}
 
 	public Long getId() {
 		return id;
