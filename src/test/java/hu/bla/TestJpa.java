@@ -103,11 +103,11 @@ public class TestJpa {
 	}
 
 	private void setup(String persUnit) {
-		time = System.currentTimeMillis();
 		if (factory != null) {
 			factory.close();
 		}
 		factory = Persistence.createEntityManagerFactory(persUnit);
+		time = System.currentTimeMillis();
 	}
 
 	private void openTx() {
