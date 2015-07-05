@@ -3,6 +3,7 @@ package hu.bla;
 import hu.bla.model.Felelos;
 import hu.bla.model.Felhasznalo;
 import hu.bla.model.Irat;
+import hu.bla.model.IratBase;
 import hu.bla.model.SzervezetiEgyseg;
 
 import java.sql.SQLException;
@@ -86,15 +87,19 @@ public class TestJpa {
 			logger.info("Join fetch nélkül:");
 		}
 		Query q = em.createQuery(sql);
-		List<Irat> iratok = q.getResultList();
+		List<IratBase> iratok = q.getResultList();
+		
+		iratok.add(new Irat(new Felhasznalo("Hibernétnál Kakukk Tojás")));
 
-		for (Irat irat : iratok) {
-			Felelos f = irat.getFelelos();
+		for (IratBase iratBase : iratok) {
+			Felelos f = iratBase.getFelelos();
 			// Hibernate proxy-zott tipust rak ki,
 			// ezzel szemben az Eclipselink a ténylegeset.
-			logger.info("<<< EZ A LÉNYEG >>> class: " + f.getClass() + ", toString: " + irat);
+			logger.info("<<< EZ A LÉNYEG >>> class: " + f.getClass() + ", name: " + f.getName());
 		}
+
 		logger.info("Size: " + iratok.size());
+		
 		closeTx();
 	}
 
