@@ -117,8 +117,9 @@ public class TestJpa {
 	}
 
 	private void closeTx() {
-		transaction.commit();
+		em.flush();
 		em.close();
+		transaction.commit();
 	}
 
 	static {
