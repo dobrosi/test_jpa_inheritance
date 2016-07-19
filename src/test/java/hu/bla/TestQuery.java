@@ -77,10 +77,7 @@ public class TestQuery {
 	}
 
 	private void setup(String persUnit) {
-		if (factory != null) {
-			factory.close();
-		}
-		factory = Persistence.createEntityManagerFactory(persUnit);
+		factory = FactoryHolder.getFactorty(persUnit);
 	}
 
 	private void openTx() {
