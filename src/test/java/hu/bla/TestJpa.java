@@ -17,6 +17,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -28,6 +29,11 @@ public class TestJpa {
 	private EntityTransaction transaction;
 	private long time;
 
+	@Test
+	public void initBla() {
+		System.out.println("!!!!!!!");
+	}
+	
 	@Test()
 	public void testHibernate() {
 		String persUnit = "hibernate";
@@ -36,9 +42,12 @@ public class TestJpa {
 		test(1);
 
 		printTime(persUnit);
+		
+		System.out.println("Andriska");
 	}
 
 	@Test
+	@Ignore
 	public void testEclipselink() {
 		String persUnit = "eclipselink";
 		setup(persUnit);
@@ -108,10 +117,7 @@ public class TestJpa {
 	}
 
 	private void setup(String persUnit) {
-		if (factory != null) {
-			factory.close();
-		}
-		factory = Persistence.createEntityManagerFactory(persUnit);
+		factory = FactoryHolder.getFactorty(persUnit);
 		time = System.currentTimeMillis();
 	}
 

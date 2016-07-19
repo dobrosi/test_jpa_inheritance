@@ -26,22 +26,26 @@ public class TestFasterQuery {
 
 	@Test()
 	public void test() {
-
 		String persUnit = "hibernate";
 		setup(persUnit);
 
-
+		em = factory.createEntityManager();
 
 		openTx();
 		createData();
 		closeTx();
 
-		printResult(false);
-		printTime("WITHOUT JOIN");
-
+		openTx();
+		printResult(true);
+		closeTx();
+		
+		openTx();
+		printResult(true);
+		closeTx();
+		
 		// test(1, true);
 		// printTime("WITH JOIN");
-
+		em.close();
 	}
 
 	private void test(int count, boolean withJoin) {
@@ -73,7 +77,6 @@ public class TestFasterQuery {
 	}
 
 	private void printResult(boolean withFetch) {
-		openTx();
 		String sql = "select i from IratBase i";
 		if (withFetch) {
 			sql += " join fetch i.felelos";
@@ -87,20 +90,6 @@ public class TestFasterQuery {
 		List<IratBase> iratok = q.getResultList();
 
 		printIratFelelosok(iratok);
-
-		// em.persist(new Felhasznalo("Bela"));
-
-		closeTx();
-		openTx();
-
-		em.createQuery(sql, IratBase.class);
-		// q.setHint("org.hibernate.cacheable", true);
-		iratok = q.getResultList();
-
-		printIratFelelosok(iratok);
-
-		closeTx();
-		logger.info("Size: " + iratok.size());
 	}
 
 	private void printCount(int count, boolean withCache) {
@@ -125,15 +114,11 @@ public class TestFasterQuery {
 	}
 
 	private void setup(String persUnit) {
-		if (factory != null) {
-			factory.close();
-		}
-		factory = Persistence.createEntityManagerFactory(persUnit);
+		factory = FactoryHolder.getFactorty(persUnit);
 		time = System.currentTimeMillis();
 	}
 
 	private void openTx() {
-		em = factory.createEntityManager();
 		transaction = em.getTransaction();
 		transaction.begin();
 	}
@@ -141,7 +126,6 @@ public class TestFasterQuery {
 	private void closeTx() {
 		em.flush();
 		transaction.commit();
-		em.close();
 	}
 
 }
